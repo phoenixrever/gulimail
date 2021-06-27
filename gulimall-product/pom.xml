@@ -3,12 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <artifactId>gulimall</artifactId>
+        <groupId>com.phoenixhell.gulimall</groupId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.phoenixhell.gulimall</groupId>
     <artifactId>gulimall-product</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>gulimall-product</name>
@@ -26,6 +24,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.4.5</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

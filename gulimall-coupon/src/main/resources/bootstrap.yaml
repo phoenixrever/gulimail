@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: gulimall-coupon
+  cloud:
+    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml #指定yaml格式的配置 不能少 否则不能启动
+        namespace:  07a2c09c-5dc2-4d42-809f-00875295bcb0  #使用dev 命名空间的配置文件
+        group: dev     #类似与bus的stream 分组 定点推送config
+        # ${spring.application.name}-${spring.profiles.active}.${file-extension}
+        #cloud-config-nacos-client-dev.yaml
+#       子选项一定要上下对齐
+#        extension-configs:高版本nacos配置
+        ext-config:
+          - data-id: datasource.yaml
+            group: dev
+            refresh: true
+          - data-id: mybatis.yaml
+            group: dev
+            refresh: true
+          - data-id: other.yaml
+            group: dev
+            refresh: true

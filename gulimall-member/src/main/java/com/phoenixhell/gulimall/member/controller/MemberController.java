@@ -1,19 +1,15 @@
 package com.phoenixhell.gulimall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.member.entity.MemberEntity;
-import com.phoenixhell.gulimall.member.service.MemberService;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.member.entity.MemberEntity;
+import com.phoenixhell.gulimall.member.feign.CouponFeignService;
+import com.phoenixhell.gulimall.member.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -30,6 +26,16 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private CouponFeignService couponFeignService;
+
+    @GetMapping("/coupon")
+    public R test(){
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setNickname("phoenixhell");
+        R r = couponFeignService.memberCoupons();
+        return R.ok().put("member",memberEntity).put("coupon", r);
+    }
     /**
      * 列表
      */

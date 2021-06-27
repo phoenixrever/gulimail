@@ -5,3 +5,4 @@ spring:
     url: jdbc:mysql://192.168.56.100:3306/gulimall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.jdbc.Driver
 
+
