@@ -10,6 +10,8 @@ import com.phoenixhell.gulimall.product.entity.CategoryEntity;
 import com.phoenixhell.gulimall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,6 +51,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return menu;
         }).sorted((menu1, menu2) -> (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort())).collect(Collectors.toList());
         return levelOneMenu;
+    }
+
+    @Override
+    public Long[] findCatalogPath(Long catalogId) {
+        List<Long> path = new ArrayList<>();
+        List<Long> catalogPath = findParent(catalogId, path);
+        // catalogPath.toArray();返回的obj 不能强转
+        Collections.reverse(catalogPath);
+        return catalogPath.toArray(new Long[catalogPath.size()]);
+    }
+
+    private List<Long> findParent(Long catalogId,List<Long> path){
+        path.add(catalogId);
+        CategoryEntity category = this.getById(catalogId);
+        if(category.getParentCid()!=0){
+            findParent(category.getParentCid(),path);
+        }
+        return path;
     }
     //递归查找所有子分类  最后一步list为空  menu自然也为null  所欲空指针异常
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> list) {

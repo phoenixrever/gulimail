@@ -2,21 +2,21 @@ package com.phoenixhell.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.phoenixhell.common.utils.PageUtils;
-import com.phoenixhell.gulimall.product.entity.AttrGroupEntity;
+import com.phoenixhell.gulimall.product.entity.CategoryBrandRelationEntity;
 
 import java.util.Map;
 
 /**
- * 属性分组
+ * 品牌分类关联
  *
  * @author phoenixhell
  * @email phoenixrever@gmail.com
- * @date 2021-05-13 23:21:46
+ * @date 2021-06-30 21:49:20
  */
-public interface AttrGroupService extends IService<AttrGroupEntity> {
+public interface CategoryBrandRelationService extends IService<CategoryBrandRelationEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    PageUtils queryPage(Map<String, Object> params, Long catalogId);
+    void saveDetail(CategoryBrandRelationEntity categoryBrandRelation);
 }
 
