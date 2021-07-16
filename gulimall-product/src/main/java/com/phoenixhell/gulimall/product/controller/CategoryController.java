@@ -72,7 +72,7 @@ public class CategoryController {
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public R update(@RequestBody CategoryEntity category) {
         System.out.println(category);
-        categoryService.updateById(category);
+        categoryService.updateCascade(category);
 
         return R.ok();
     }

@@ -1,6 +1,7 @@
 package com.phoenixhell.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.phoenixhell.common.utils.PageUtils;
@@ -38,6 +39,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) {
+        //获取各自的name冗余数据存入关系表
         Long brandId = categoryBrandRelation.getBrandId();
         Long catalogId = categoryBrandRelation.getCatalogId();
         BrandEntity brandEntity = brandService.getById(brandId);
@@ -48,6 +50,25 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         categoryBrandRelation.setCatalogName(categoryEntityName);
         System.out.println(categoryBrandRelation);
         this.save(categoryBrandRelation);
+    }
+
+    @Override
+    public Boolean updateBrand(Long brandId, String name) {
+        CategoryBrandRelationEntity categoryBrandRelation = new CategoryBrandRelationEntity();
+        categoryBrandRelation.setBrandName(name);
+        categoryBrandRelation.setBrandId(brandId);
+        return this.update(categoryBrandRelation, new UpdateWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
+    }
+
+    @Override
+    public Boolean updateCategory(Long catId, String name) {
+//        CategoryBrandRelationEntity CategoryBrandRelationEntity = new CategoryBrandRelationEntity();
+//        CategoryBrandRelationEntity.setCatalogId(catId);
+//        CategoryBrandRelationEntity.setCatalogName(name);
+//        return this.update(CategoryBrandRelationEntity, new UpdateWrapper<CategoryBrandRelationEntity>().eq("catalog_id",catId));
+          //换mapper写法
+         return this.baseMapper.updateCategory(catId,name);
+
     }
 
 }

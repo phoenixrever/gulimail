@@ -7,8 +7,12 @@ import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.Query;
 import com.phoenixhell.gulimall.product.dao.CategoryDao;
 import com.phoenixhell.gulimall.product.entity.CategoryEntity;
+import com.phoenixhell.gulimall.product.service.CategoryBrandRelationService;
 import com.phoenixhell.gulimall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +23,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -53,6 +60,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return levelOneMenu;
     }
 
+    /**
+     * 查找分类路径
+     * @param catalogId
+     * @return
+     */
     @Override
     public Long[] findCatalogPath(Long catalogId) {
         List<Long> path = new ArrayList<>();
@@ -70,6 +82,25 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
         return path;
     }
+
+    /**
+     * 如果更新字段含有关系中有name name是 category_brand_relation catalog_name
+     * @param category
+     */
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        boolean updateById = this.updateById(category);
+        boolean  updateCategory=true;
+        if(!StringUtils.isEmpty(category.getName())){
+            updateCategory =  categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+        }
+        if(!updateById || ! updateCategory){
+            throw  new RuntimeException("跟新category关系表 级联错误");
+        }
+    }
+
+
     //递归查找所有子分类  最后一步list为空  menu自然也为null  所欲空指针异常
     private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> list) {
         List<CategoryEntity> children = list.stream().filter(menu -> menu.getParentCid().equals(root.getCatId()))

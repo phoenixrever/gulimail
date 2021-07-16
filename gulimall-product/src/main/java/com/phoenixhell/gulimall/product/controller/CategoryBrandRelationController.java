@@ -20,7 +20,7 @@ import java.util.Map;
  * @date 2021-06-30 21:49:20
  */
 @RestController
-@RequestMapping("product/catagorybrandrelation")
+@RequestMapping("product/categorybrandrelation")
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
@@ -57,7 +57,7 @@ public class CategoryBrandRelationController {
     }
 
     /**
-     * 保存
+     * 保存品牌与分类关联 `pms_category_brand_relation`
      */
     @RequestMapping("/save")
     public R save(@RequestBody CategoryBrandRelationEntity categoryBrandRelation) {

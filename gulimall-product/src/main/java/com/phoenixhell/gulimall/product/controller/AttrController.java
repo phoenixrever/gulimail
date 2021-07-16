@@ -2,8 +2,9 @@ package com.phoenixhell.gulimall.product.controller;
 
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
-import com.phoenixhell.gulimall.product.entity.AttrEntity;
 import com.phoenixhell.gulimall.product.service.AttrService;
+import com.phoenixhell.gulimall.product.vo.AttrRespVo;
+import com.phoenixhell.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,33 +36,45 @@ public class AttrController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 列表
+     */
+    @GetMapping("/{attrType}/list/{catalogId}")
+    public R baseAttrList(@RequestParam Map<String, Object> params, @PathVariable("catalogId") Long catalogId, @PathVariable String attrType){
+        //通过关联表查出分类和分组的名字
+        PageUtils page = attrService.queryBaseAttrPage(params,catalogId,attrType);
+        return R.ok().put("page", page);
+    }
+
 
     /**
      * 信息
      */
     @RequestMapping("/info/{attrId}")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
+//		AttrEntity attr = attrService.getById(attrId);
+		AttrRespVo attrRespVo = attrService.getAttrInfo(attrId);
 
-        return R.ok().put("attr", attr);
+        return R.ok().put("attr", attrRespVo);
     }
 
     /**
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody AttrEntity attr){
-		attrService.save(attr);
+    public R save(@RequestBody AttrVo attrVo){
+		attrService.saveAttr(attrVo);
 
         return R.ok();
     }
 
     /**
-     * 修改
+     * 修改 这边接受到的数据是AttrVo
+     * 回显才需要AttrVo  回显catalogPath 和 分组的label名字
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
+    public R update(@RequestBody AttrVo attrVo){
+		attrService.updateAttr(attrVo);
 
         return R.ok();
     }

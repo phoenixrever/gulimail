@@ -30,7 +30,15 @@ public class ExceptionControllerAdvice {
     //精确匹配不到的错误 最后来到这
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable) {
+        log.error("error===>", throwable.getMessage());
         return R.error(BizCodeEnume.UNKNOWN_EXCEPTION.getCode(),BizCodeEnume.UNKNOWN_EXCEPTION.getMsg()).put("data",throwable.getMessage());
 
     }
+
+//    //精确匹配不到的错误 最后来到这
+//    @ExceptionHandler(value = Exception.class)
+//    public R handleException(Exception e) {
+//        return R.error(BizCodeEnume.UNKNOWN_EXCEPTION.getCode(),BizCodeEnume.UNKNOWN_EXCEPTION.getMsg()).put("data",e.getMessage());
+//
+//    }
 }

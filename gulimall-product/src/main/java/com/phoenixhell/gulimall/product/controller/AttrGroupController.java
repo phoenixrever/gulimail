@@ -4,14 +4,19 @@ import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
 import com.phoenixhell.common.valid.AddGroup;
 import com.phoenixhell.common.valid.UpdateGroup;
+import com.phoenixhell.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import com.phoenixhell.gulimall.product.entity.AttrEntity;
 import com.phoenixhell.gulimall.product.entity.AttrGroupEntity;
+import com.phoenixhell.gulimall.product.service.AttrAttrgroupRelationService;
 import com.phoenixhell.gulimall.product.service.AttrGroupService;
+import com.phoenixhell.gulimall.product.service.AttrService;
 import com.phoenixhell.gulimall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,6 +36,31 @@ public class AttrGroupController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private AttrService attrService;
+
+    @Autowired
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    /**
+     *根据分组ID获取关联的所有基本属性
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable Long attrgroupId){
+        List<AttrEntity> entities = attrService.getRelationAttr(attrgroupId);
+        return R.ok().put("data", entities);
+    }
+
+    /**
+     *根据分关联数组删除所有属性关系对应
+     * 接受json 数据要用@RequestBody
+     */
+    @PostMapping("/attr/relation/delete")
+    public R attrRelation(@RequestBody List<AttrAttrgroupRelationEntity> listEntities){
+        attrAttrgroupRelationService.deleteBatchRelationByIds(listEntities);
+        return R.ok();
+    }
 
     /**
      * 列表

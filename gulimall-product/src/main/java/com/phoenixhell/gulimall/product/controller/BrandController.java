@@ -70,11 +70,11 @@ public class BrandController {
     }
 
     /**
-     * 修改
+     * 如果跟新字段包含关系表中的字段修改所有冗余关系表
      */
     @RequestMapping("/update")
     public R update(@Validated(value = {UpdateGroup.class})  @RequestBody BrandEntity brand){
-		brandService.updateById(brand);
+		brandService.updateDetail(brand);
         return R.ok();
     }
 
