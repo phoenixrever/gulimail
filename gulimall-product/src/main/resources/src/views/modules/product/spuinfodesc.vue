@@ -29,7 +29,7 @@
         label="商品id">
       </el-table-column>
       <el-table-column
-        prop="decript"
+        prop="descript"
         header-align="center"
         align="center"
         label="商品介绍">

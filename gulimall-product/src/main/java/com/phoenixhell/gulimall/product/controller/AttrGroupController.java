@@ -11,6 +11,7 @@ import com.phoenixhell.gulimall.product.service.AttrAttrgroupRelationService;
 import com.phoenixhell.gulimall.product.service.AttrGroupService;
 import com.phoenixhell.gulimall.product.service.AttrService;
 import com.phoenixhell.gulimall.product.service.CategoryService;
+import com.phoenixhell.gulimall.product.vo.AttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,35 @@ public class AttrGroupController {
         List<AttrEntity> entities = attrService.getRelationAttr(attrgroupId);
         return R.ok().put("data", entities);
     }
+
+    /**
+     *根据分类ID获取关联的所有分组及其各自的所有属性
+     */
+    @GetMapping("/{catalogId}/withattr")
+    public R getAttrGroupWithAttr(@PathVariable Long catalogId){
+        List<AttrGroupWithAttrsVo> entities = attrGroupService.getAttrGroupWithAttr(catalogId);
+        return R.ok().put("data", entities);
+    }
+
+    /**
+     *新增
+     */
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntities){
+        attrAttrgroupRelationService.saveBatch(attrAttrgroupRelationEntities);
+        return R.ok();
+    }
+
+    /**
+     *根据分组ID获取没有关联的所有基本属性
+     */
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R attrNoRelation(@RequestParam Map<String, Object> params,@PathVariable Long attrgroupId){
+        PageUtils page = attrService.getNoRelationAttr(params,attrgroupId);
+        return R.ok().put("page", page);
+    }
+
+
 
     /**
      *根据分关联数组删除所有属性关系对应

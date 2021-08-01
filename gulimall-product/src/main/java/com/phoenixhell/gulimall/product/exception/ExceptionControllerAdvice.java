@@ -27,10 +27,10 @@ public class ExceptionControllerAdvice {
         return R.error(BizCodeEnume.VALID_EXCEPTION.getCode(), BizCodeEnume.VALID_EXCEPTION.getMsg()).put("data", errorMap);
     }
 
-    //精确匹配不到的错误 最后来到这
+    //精确匹配不到的错误 最后来到这写了控制台就不报错了
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable) {
-        log.error("error===>", throwable.getMessage());
+        log.error("error===>", throwable);
         return R.error(BizCodeEnume.UNKNOWN_EXCEPTION.getCode(),BizCodeEnume.UNKNOWN_EXCEPTION.getMsg()).put("data",throwable.getMessage());
 
     }

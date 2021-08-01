@@ -29,6 +29,20 @@ spring:
           filters:
             #/api/thirdparty/ ->  /
             - RewritePath=/api/thirdparty/(?<segment>.*),/$\{segment}
+        - id: gulimall-ware
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            #/api/ware/->  /ware
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: gulimall-member
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            #/api/member/->  /member
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
         - id: renren-fast
           uri: lb://renren-fast
           predicates:

@@ -4,8 +4,8 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="商品介绍" prop="decript">
-      <el-input v-model="dataForm.decript" placeholder="商品介绍"></el-input>
+    <el-form-item label="商品介绍" prop="descript">
+      <el-input v-model="dataForm.descript" placeholder="商品介绍"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -22,10 +22,10 @@
         visible: false,
         dataForm: {
           spuId: 0,
-          decript: ''
+          descript: ''
         },
         dataRule: {
-          decript: [
+          descript: [
             { required: true, message: '商品介绍不能为空', trigger: 'blur' }
           ]
         }
@@ -44,7 +44,7 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.decript = data.spuInfoDesc.decript
+                this.dataForm.descript = data.spuInfoDesc.descript
               }
             })
           }
@@ -59,7 +59,7 @@
               method: 'post',
               data: this.$http.adornData({
                 'spuId': this.dataForm.spuId || undefined,
-                'decript': this.dataForm.decript
+                'descript': this.dataForm.descript
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

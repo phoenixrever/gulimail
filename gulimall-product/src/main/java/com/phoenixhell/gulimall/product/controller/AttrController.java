@@ -2,13 +2,16 @@ package com.phoenixhell.gulimall.product.controller;
 
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.product.entity.ProductAttrValueEntity;
 import com.phoenixhell.gulimall.product.service.AttrService;
+import com.phoenixhell.gulimall.product.service.ProductAttrValueService;
 import com.phoenixhell.gulimall.product.vo.AttrRespVo;
 import com.phoenixhell.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +28,8 @@ import java.util.Map;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
 
     /**
      * 列表
@@ -34,6 +39,16 @@ public class AttrController {
         PageUtils page = attrService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    public R baseAttrListForSpu( @PathVariable("spuId") Long spuId){
+        List<ProductAttrValueEntity> entities = productAttrValueService.query().eq("spu_id", spuId).list();
+
+        return R.ok().put("data", entities);
     }
 
     /**
@@ -76,6 +91,12 @@ public class AttrController {
     public R update(@RequestBody AttrVo attrVo){
 		attrService.updateAttr(attrVo);
 
+        return R.ok();
+    }
+
+    @PostMapping("/update/{spuId}")
+    public R updateSpuAttr(@PathVariable Long spuId,@RequestBody List<ProductAttrValueEntity> entities){
+        productAttrValueService.updateSpuAttr(spuId,entities);
         return R.ok();
     }
 

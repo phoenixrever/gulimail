@@ -2,14 +2,18 @@ package com.phoenixhell.gulimall.product.controller;
 
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.product.entity.BrandEntity;
 import com.phoenixhell.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.phoenixhell.gulimall.product.service.BrandService;
 import com.phoenixhell.gulimall.product.service.CategoryBrandRelationService;
+import com.phoenixhell.gulimall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,6 +28,9 @@ import java.util.Map;
 public class CategoryBrandRelationController {
     @Autowired
     private CategoryBrandRelationService categoryBrandRelationService;
+
+    @Autowired
+    private BrandService brandService;
 
     /**
      * 列表
@@ -44,6 +51,21 @@ public class CategoryBrandRelationController {
         List<CategoryBrandRelationEntity> brandRelationList = categoryBrandRelationService.query().eq("brand_id", brandId).list();
 
         return R.ok().put("brandRelationList", brandRelationList);
+    }
+
+    /**
+     * 获取当前分类下的所有品牌
+     */
+    @GetMapping("/brands/list")
+    public R brandsList(@RequestParam(value = "catId", required = true) Long catId) {
+        List<BrandEntity> brandEntities= categoryBrandRelationService.getBrandsById(catId);
+        List<BrandVo> brandVos = brandEntities.stream().map(b -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(b.getBrandId());
+            brandVo.setBrandName(b.getName());
+            return brandVo;
+        }).collect(Collectors.toList());
+        return R.ok().put("data", brandVos);
     }
 
     /**

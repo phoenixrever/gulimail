@@ -1,19 +1,16 @@
 package com.phoenixhell.gulimall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.coupon.entity.SpuBoundsEntity;
-import com.phoenixhell.gulimall.coupon.service.SpuBoundsService;
+import com.phoenixhell.common.to.SpuBoundsTo;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.coupon.entity.SpuBoundsEntity;
+import com.phoenixhell.gulimall.coupon.service.SpuBoundsService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -56,10 +53,23 @@ public class SpuBoundsController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody SpuBoundsEntity spuBounds){
-		spuBoundsService.save(spuBounds);
+        spuBoundsService.save(spuBounds);
 
         return R.ok();
     }
+
+    /**
+     *feign 保存    专门给远程调用
+     * 这里参数 实际上可以拿spuBoundsEntity直接接受json
+     */
+    @RequestMapping("/feign/saveSpuBounds")
+    public R saveSpuBounds(@RequestBody SpuBoundsTo spuBoundsTo){
+        SpuBoundsEntity spuBoundsEntity = new SpuBoundsEntity();
+        BeanUtils.copyProperties(spuBoundsTo,spuBoundsEntity );
+        spuBoundsService.save(spuBoundsEntity);
+        return R.ok();
+    }
+
 
     /**
      * 修改

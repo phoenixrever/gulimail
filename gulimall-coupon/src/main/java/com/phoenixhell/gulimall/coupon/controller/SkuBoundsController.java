@@ -1,19 +1,14 @@
 package com.phoenixhell.gulimall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.coupon.entity.SkuBoundsEntity;
-import com.phoenixhell.gulimall.coupon.service.SkuBoundsService;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.coupon.entity.SkuBoundsEntity;
+import com.phoenixhell.gulimall.coupon.service.SkuBoundsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -54,7 +49,7 @@ public class SkuBoundsController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public R save(@RequestBody SkuBoundsEntity skuBounds){
 		skuBoundsService.save(skuBounds);
 

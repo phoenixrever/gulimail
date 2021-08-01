@@ -1,19 +1,15 @@
 package com.phoenixhell.gulimall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.coupon.entity.SkuFullReductionEntity;
-import com.phoenixhell.gulimall.coupon.service.SkuFullReductionService;
+import com.phoenixhell.common.to.SkuReductionTo;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.coupon.entity.SkuFullReductionEntity;
+import com.phoenixhell.gulimall.coupon.service.SkuFullReductionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -58,6 +54,15 @@ public class SkuFullReductionController {
     public R save(@RequestBody SkuFullReductionEntity skuFullReduction){
 		skuFullReductionService.save(skuFullReduction);
 
+        return R.ok();
+    }
+    /**
+     *feign 保存  这边还要用其他参数 所以不能用实体类接受参数
+     * 必须用TO
+     */
+    @RequestMapping("/feign/saveSkuReduction")
+    public R saveSkuReduction(@RequestBody SkuReductionTo SkuReductionTo){
+		skuFullReductionService.saveSkuReduction(SkuReductionTo);
         return R.ok();
     }
 
