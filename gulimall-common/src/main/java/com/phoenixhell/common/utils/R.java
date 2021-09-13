@@ -8,6 +8,8 @@
 
 package com.phoenixhell.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -20,7 +22,7 @@ import java.util.Map;
  */
 public class R extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
-	
+
 	public R() {
 		put("code", 0);
 		put("msg", "success");
@@ -61,6 +63,20 @@ public class R extends HashMap<String, Object> {
 		super.put(key, value);
 		return this;
 	}
+
+	public <T> T getData(TypeReference<T> typeReference){
+		Object data = get("data");
+		String  s= JSON.toJSONString(data);
+		T t = JSON.parseObject(s, typeReference);
+		return  t;
+	}
+	public <T> T getData(String key,TypeReference<T> typeReference){
+		Object data = get(key);
+		String  s= JSON.toJSONString(data);
+		T t = JSON.parseObject(s, typeReference);
+		return  t;
+	}
+
 	public int getCode(){
 		return (int) this.get("code");
 	}

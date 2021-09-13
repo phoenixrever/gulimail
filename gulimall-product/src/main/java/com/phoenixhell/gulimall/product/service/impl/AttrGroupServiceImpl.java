@@ -11,7 +11,9 @@ import com.phoenixhell.gulimall.product.entity.AttrGroupEntity;
 import com.phoenixhell.gulimall.product.service.AttrAttrgroupRelationService;
 import com.phoenixhell.gulimall.product.service.AttrGroupService;
 import com.phoenixhell.gulimall.product.service.AttrService;
+import com.phoenixhell.gulimall.product.service.ProductAttrValueService;
 import com.phoenixhell.gulimall.product.vo.AttrGroupWithAttrsVo;
+import com.phoenixhell.gulimall.product.vo.SkuItemVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,10 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private AttrService attrService;
-
+    @Autowired
+    ProductAttrValueService productAttrValueService;
+    @Autowired
+    private AttrGroupService attrGroupService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<AttrGroupEntity> page = this.page(
@@ -75,5 +80,14 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         }).collect(Collectors.toList());
 
         return attrGroupWithAttrs;
+    }
+
+    @Override
+    public List<SkuItemVo.SpuItemAttrGroupVo> getAttrGroupWithAttrBySpuId(Long spuId,Long catalogId) {
+        //查出当前spu对的的所有属性的分组信息，以及当前属性下所有属性对应的值
+        //1 查出所有spu 用到的属性
+        List<SkuItemVo.SpuItemAttrGroupVo> spuItemAttrGroupVos = baseMapper.getAttrGroupWithAttrBySpuId(spuId,catalogId);
+//        System.out.println(spuItemAttrGroupVos);
+        return  spuItemAttrGroupVos;
     }
 }

@@ -1,19 +1,15 @@
 package com.phoenixhell.gulimall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.coupon.entity.SeckillSessionEntity;
-import com.phoenixhell.gulimall.coupon.service.SeckillSessionService;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.coupon.entity.SeckillSessionEntity;
+import com.phoenixhell.gulimall.coupon.service.SeckillSessionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -29,6 +25,13 @@ import com.phoenixhell.common.utils.R;
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;
+
+
+    @GetMapping("/last3DaysSession")
+    public R getLast3DaysSession(){
+       List<SeckillSessionEntity> seckillSessionEntities =  seckillSessionService.getLast3DaysSessions();
+        return R.ok().put("sessions",seckillSessionEntities);
+    }
 
     /**
      * 列表

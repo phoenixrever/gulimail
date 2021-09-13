@@ -1,7 +1,8 @@
 package com.phoenixhell.gulimall.product.dao;
 
-import com.phoenixhell.gulimall.product.entity.AttrGroupEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.phoenixhell.gulimall.product.entity.AttrGroupEntity;
+import com.phoenixhell.gulimall.product.vo.SkuItemVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,4 +17,5 @@ import java.util.List;
 @Mapper
 public interface AttrGroupDao extends BaseMapper<AttrGroupEntity> {
 
+    List<SkuItemVo.SpuItemAttrGroupVo> getAttrGroupWithAttrBySpuId(Long spuId,Long catalogId);
 }

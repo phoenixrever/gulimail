@@ -11,7 +11,7 @@ public class AttrVo {
     private Long attrId;
 
     /**
-     * 所属分类id  vo 属性
+     * 所属分类id  com.phoenixhell.auth.vo 属性
      */
     private Long attrGroupId;
 

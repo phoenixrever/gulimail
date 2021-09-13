@@ -1,5 +1,5 @@
 #server:
-#  port: 9527
+#  port: 9999
 #spring:
 #  application:
 #    name: gulimall-gateway
@@ -11,14 +11,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: gulimall-coupon
-          uri: lb://gulimall-coupon
-          predicates:
-            - Path=/api/coupon/**
         - id: gulimall-product
           uri: lb://gulimall-product
           predicates:
-            - Path=/api/product/**
+            - Path=/api/product/**,/hello
           filters:
             #/api/product ->  /product
             - RewritePath=/api/(?<segment>.*),/$\{segment}
@@ -36,6 +32,7 @@ spring:
           filters:
             #/api/ware/->  /ware
             - RewritePath=/api/(?<segment>.*),/$\{segment}
+
         - id: gulimall-member
           uri: lb://gulimall-member
           predicates:
@@ -43,6 +40,29 @@ spring:
           filters:
             #/api/member/->  /member
             - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        - id: gulimall-search
+          uri: lb://gulimall-search
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
+        #秒杀
+        - id: gulimall-coupon
+          uri: lb://gulimall-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        #秒杀
+        - id: gulimall-seckill
+          uri: lb://gulimall-seckill
+          predicates:
+            - Path=/api/seckill/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+
         - id: renren-fast
           uri: lb://renren-fast
           predicates:
@@ -50,3 +70,36 @@ spring:
           filters:
             #/api/** ->  /api/renren-fast
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
+        #gateway host路由规则 必须放在最后面 因为host断言符合所有路径映射
+
+        #gulimall-cart
+        - id: gulimall-cart-route
+          uri: lb://gulimall-cart
+          predicates:
+            #按照host断言
+            - Host=cart.gulimall.com
+
+        #gulimall-search
+        - id: gulimall-search-route
+          uri: lb://gulimall-search
+          predicates:
+            #按照host断言
+            - Host=search.gulimall.com
+
+        - id: gulimall-auth-route
+          uri: lb://gulimall-auth-server
+          predicates:
+            #按照host断言
+            - Host=auth.gulimall.com
+
+        - id: gulimall-order-route
+          uri: lb://gulimall-order
+          predicates:
+            #按照host断言
+            - Host=order.gulimall.com
+
+        - id: gulimall-host-route
+          uri: lb://gulimall-product
+          predicates:
+            #按照host断言
+            - Host=gulimall.com,item.gulimall.com

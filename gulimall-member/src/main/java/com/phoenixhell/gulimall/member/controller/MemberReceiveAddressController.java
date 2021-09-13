@@ -1,19 +1,15 @@
 package com.phoenixhell.gulimall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.member.entity.MemberReceiveAddressEntity;
-import com.phoenixhell.gulimall.member.service.MemberReceiveAddressService;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.member.entity.MemberReceiveAddressEntity;
+import com.phoenixhell.gulimall.member.service.MemberReceiveAddressService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -29,6 +25,13 @@ import com.phoenixhell.common.utils.R;
 public class MemberReceiveAddressController {
     @Autowired
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    // 远程获取会员收获地址feign接口
+    @GetMapping("/{memberId}/addresses")
+    public List<MemberReceiveAddressEntity> getAddress(@PathVariable Long memberId){
+        List<MemberReceiveAddressEntity> addressEntityList = memberReceiveAddressService.query().eq("member_id", memberId).list();
+        return addressEntityList;
+    }
 
     /**
      * 列表

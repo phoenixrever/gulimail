@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: gulimall-product
+  session:
+    store-type: redis
   datasource:
     username: root
     password: root
@@ -16,6 +18,14 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  #thymeleaf
+  thymeleaf:
+    cache: false # 不缓存页面刷新看到实时效果
+    #prefix: classpath:/templates/
+    #suffix: .html
+  redis:
+    host: 192.168.56.100
+
 #mybatis
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -33,8 +43,15 @@ mybatis-plus:
     cache-enabled: false
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
+
 #打印sql 语句
 logging:
   level:
     com.phoenixhell.gulimall : debug
 
+gulimall:
+  thread:
+    core-pool-size: 20
+    maximum-pool-size: 200
+    keep-alive-time: 10
+    work-queues: 100000

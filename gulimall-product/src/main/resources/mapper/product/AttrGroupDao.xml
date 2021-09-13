@@ -3,7 +3,7 @@
 
 <mapper namespace="com.phoenixhell.gulimall.product.dao.AttrGroupDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.phoenixhell.gulimall.product.entity.AttrGroupEntity" id="attrGroupMap">
         <result property="attrGroupId" column="attr_group_id"/>
         <result property="attrGroupName" column="attr_group_name"/>
@@ -12,6 +12,20 @@
         <result property="icon" column="icon"/>
         <result property="catalogId" column="catalog_id"/>
     </resultMap>
+    <resultMap id="spuItemAttrGroupVo" type="com.phoenixhell.gulimall.product.vo.SkuItemVo$SpuItemAttrGroupVo">
+        <result column="attr_group_name"  property="groupName"/>
+        <collection property="attrs" ofType="com.phoenixhell.gulimall.product.vo.SkuItemVo$SpuBaseAttrVo">
+            <result column="attr_name" property="attrName"/>
+            <result column="attr_value" property="attrValue"/>
+        </collection>
+    </resultMap>
+    <select id="getAttrGroupWithAttrBySpuId" resultMap="spuItemAttrGroupVo">
+                SELECT  pv.`spu_id`,pg.`attr_group_name` ,pg.`attr_group_id`,pv.`attr_id`,pv.`attr_name`,pv.`attr_value`
+                FROM `pms_attr_group` pg
+                LEFT JOIN `pms_attr_attrgroup_relation` pr ON pg.attr_group_id = pr.`attr_group_id`
+                LEFT JOIN `pms_product_attr_value` pv ON pr.`attr_id` =pv.`attr_id`
+                WHERE pg.`catalog_id`=#{catalogId} AND pv.`spu_id`=#{spuId}
+    </select>
 
 
 </mapper>

@@ -7,6 +7,7 @@ import com.phoenixhell.gulimall.product.service.SkuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -24,6 +25,14 @@ import java.util.Map;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    //远程获取商品价格
+    @GetMapping("/{skuId}/price")
+    public BigDecimal getSkuPrice(@PathVariable Long skuId){
+        SkuInfoEntity skuInfoEntity = skuInfoService.getById(skuId);
+       return skuInfoEntity.getPrice();
+    }
+
 
     /**
      * 列表

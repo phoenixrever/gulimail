@@ -14,7 +14,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = {ListValueConstraintValidator.class})
 public @interface ListValue {
-
+    //默认message 为resource 下  ValidationMessages.properties 里面的
+    //com.phoenixhell.common.valid.ListValue.message=必须提交指定的值
     String message() default "{com.phoenixhell.common.valid.ListValue.message}";
 
     Class<?>[] groups() default { };

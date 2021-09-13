@@ -3,6 +3,10 @@ server:
 spring:
   application:
     name: gulimall-order
+  thymeleaf:
+    cache: false
+  session:
+    store-type: redis
   datasource:
     username: root
     password: root
@@ -12,6 +16,27 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+  redis:
+    host: 192.168.56.100
+  rabbitmq:
+    host: 192.168.56.100
+    port: 5672
+    virtual-host: /
+    publisher-confirm-type: correlated #开启发送端确认
+    publisher-returns: true            #开启消息发送抵达队列的确认
+    template:
+      mandatory: true                  #只要抵达队列，以异步方式优先回调我们这个returnConfirm
+    listener:
+      simple:
+        acknowledge-mode: manual       #消费端手动ack 消息
+
+gulimall:
+  thread:
+    core-pool-size: 20
+    maximum-pool-size: 200
+    keep-alive-time: 10
+    work-queues: 100000
+
 #mybatis
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
@@ -20,7 +45,7 @@ mybatis-plus:
     db-config:
       #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
       id-type: AUTO
-      logic-delete-value: -1
+      logic-delete-value: 1
       logic-not-delete-value: 0
     banner: false
   #原生配置
@@ -29,3 +54,5 @@ mybatis-plus:
     cache-enabled: false
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
+
+

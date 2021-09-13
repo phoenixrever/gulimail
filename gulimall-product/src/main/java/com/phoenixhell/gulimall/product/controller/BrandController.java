@@ -50,21 +50,10 @@ public class BrandController {
     }
 
     /**
-     * 保存
+     * 保存 可以不处理异常 让他自动抛出  由全局异常处理捕获
      */
     @RequestMapping("/save")
-    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand/*, BindingResult result*/){
-//        if(result.hasErrors()){
-//            Map<String, String> map = new HashMap<>();
-//            result.getFieldErrors().forEach(item->{
-//                //获取错误说明
-//                String message = item.getDefaultMessage();
-//                //获取错误entity属性字段
-//                String field = item.getField();
-//                map.put(field, message);
-//            });
-//            return R.error(400, "提交的数据不合法").put("data",map);
-//        }
+    public R save(@Validated({AddGroup.class}) @RequestBody BrandEntity brand){
 		brandService.save(brand);
         return R.ok();
     }

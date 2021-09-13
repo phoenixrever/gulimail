@@ -23,6 +23,12 @@
 #    cache-enabled: false
 #    call-setters-on-nulls: true
 #    jdbc-type-for-null: 'null'
+#时间格式化
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
 logging:
   level:
     com.phoenixhell.gulimall : debug

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
 /**
  * 商品属性
  *
@@ -30,7 +29,6 @@ public class AttrController {
     private AttrService attrService;
     @Autowired
     private ProductAttrValueService productAttrValueService;
-
     /**
      * 列表
      */

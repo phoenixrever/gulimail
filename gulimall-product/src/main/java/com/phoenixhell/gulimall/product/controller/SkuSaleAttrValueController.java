@@ -1,20 +1,16 @@
 package com.phoenixhell.gulimall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.phoenixhell.gulimall.product.entity.SkuSaleAttrValueEntity;
-import com.phoenixhell.gulimall.product.service.SkuSaleAttrValueService;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.R;
+import com.phoenixhell.gulimall.product.entity.SkuSaleAttrValueEntity;
+import com.phoenixhell.gulimall.product.service.SkuSaleAttrValueService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -29,6 +25,16 @@ import com.phoenixhell.common.utils.R;
 public class SkuSaleAttrValueController {
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
+
+    //远程接口根据 skuid 返回销售属性
+    @GetMapping("/sale/{skuId}")
+    public List<String> getSaleAttrValues(@PathVariable String skuId){
+        List<SkuSaleAttrValueEntity> saleAttrValueEntities = skuSaleAttrValueService.query().eq("sku_id", skuId).list();
+        List<String> collect = saleAttrValueEntities.stream().map(s -> s.getAttrName()+":"+s.getAttrValue()).collect(Collectors.toList());
+        return collect;
+    }
+
+
 
     /**
      * 列表

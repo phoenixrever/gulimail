@@ -12,6 +12,27 @@
         <result property="attrValue" column="attr_value"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
+    <resultMap id="skuItemSaleAttrVo" type="com.phoenixhell.gulimall.product.vo.SkuItemVo$SkuItemSaleAttrVo">
+        <result column="attr_id" property="attrId"/>
+        <result column="attr_name" property="attrName"/>
+        <collection property="attrValueWithSkuIds" ofType="com.phoenixhell.gulimall.product.vo.SkuItemVo$AttrValueWithSkuId">
+            <result column="attr_value" property="attrValue"/>
+            <result column="sku_ids" property="skuIds"/>
+        </collection>
+    </resultMap>
+    <select id="getSaleAttrsBySpuId" resultMap="skuItemSaleAttrVo">
+        SELECT
+            sv.`attr_id`,
+            sv.`attr_name`,
+            sv.`attr_value`,
+            GROUP_CONCAT(DISTINCT sv.`sku_id`) sku_ids
+        FROM
+            `pms_sku_info` info
+                LEFT JOIN `pms_sku_sale_attr_value` sv
+                          ON info.`sku_id` = sv.`sku_id`
+        WHERE info.spu_id = #{spuId}
+        GROUP BY sv.`attr_id`, sv.`attr_name`,sv.`attr_value`
+    </select>
 
 
 </mapper>

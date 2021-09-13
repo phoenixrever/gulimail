@@ -13,3 +13,5 @@ spring:
       oss:
         endpoint: oss-cn-shanghai.aliyuncs.com
         bucket: phoenixhell-gulimall
+      sms:
+        expire: 5
