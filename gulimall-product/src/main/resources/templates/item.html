@@ -501,8 +501,7 @@
                 </div>
                 <!--[[${item.secKillSkuRedisTo}]]-->
                 <div th:if="${item.secKillSkuRedisTo}">
-                    <div class="box-yuyue"
-                         th:if="${item.secKillSkuRedisTo.startTime>#dates.createNow().getTime() ||  #dates.createNow().getTime()>item.secKillSkuRedisTo.endTime}">
+                    <div class="box-yuyue" th:if="${item.secKillSkuRedisTo.startTime>#dates.createNow().getTime()}">
                         <div class="yuyue-one">
                             <img src="/static/item/img/7270ffc3baecdd448958f9f5e69cf60f.png" alt=""/> 预约抢购
                         </div>
@@ -544,7 +543,7 @@
                         <li>
                             <span>￥</span>
                             <span th:if="${item.secKillSkuRedisTo}">
-                            <span th:if="${item.secKillSkuRedisTo.startTime>#dates.createNow().getTime() ||  #dates.createNow().getTime()>item.secKillSkuRedisTo.endTime}"
+                            <span th:if="${item.secKillSkuRedisTo.startTime>#dates.createNow().getTime()}"
                                   th:text="${#numbers.formatDecimal(item.skuInfoEntity.price,1,2)}"></span>
                             <span th:if="${item.secKillSkuRedisTo.startTime<=#dates.createNow().getTime()&& #dates.createNow().getTime()<=item.secKillSkuRedisTo.endTime}">[[${#numbers.formatDecimal(item.secKillSkuRedisTo.seckillPrice,1,2)}]] <span
                                     style="font-size: 10px;color:red">秒杀中...</span></span>
@@ -674,15 +673,25 @@
 
                         </div>
                     </div>
-                    <div class="box-btns-two">
-                        <a href="../商品分类\index.html">
-                            立即预约
-                        </a>
+                    <div th:if="${item.secKillSkuRedisTo}">
+                        <div class="box-btns-two"  th:if="${item.secKillSkuRedisTo.startTime>#dates.createNow().getTime()}">
+                            <a href="../商品分类\index.html" >
+                                立即预约
+                            </a>
+                        </div>
                     </div>
-                    <div style="margin-left: 20px" class="box-btns-two">
+                    <div style="margin-left: 20px" class="box-btns-two" th:if="${item.secKillSkuRedisTo==nul}">
                         <a href="#" id="addToCard" th:skuId="${item.skuInfoEntity.skuId}">
                             加入购物车
                         </a>
+                    </div>
+                    <div  th:if="${item.secKillSkuRedisTo}">
+                        <div style="margin-left: 20px" class="box-btns-two" th:if="${item.secKillSkuRedisTo.startTime<=#dates.createNow().getTime()&& #dates.createNow().getTime()<=item.secKillSkuRedisTo.endTime}">
+                            <!--秒杀的场次id-->
+                            <a href="#" id="secKillToCard" th:sessionId="${item.secKillSkuRedisTo.promotionSessionId+'_'+item.skuInfoEntity.skuId}" th:code="${item.secKillSkuRedisTo.randomCode}">
+                                立即抢购
+                            </a>
+                        </div>
                     </div>
                     <div class="box-btns-three">
                         <img src="/static/item/img/e4ed3606843f664591ff1f68f7fda12d.png" alt=""/> 分享
@@ -1347,12 +1356,28 @@
     $("#avatar").parent().css("width", "100px")
     $("a[class='sku_attr_value checked']").parent().css("border", "1px solid red")
 
+    //加入购物车
     $('#addToCard').click(function () {
         var num = $('#num').val()
         skuId = $('#addToCard').attr('skuId')
         window.location.href = `http://cart.gulimall.com/addToCard?skuId=${skuId}&num=${num}`
         return false;
     })
+    // 秒杀立即抢购
+    $("#secKillToCard").click(function f() {
+        var user=[[${session.user.id}]]
+        console.log(user === undefined);
+        if(user===undefined){
+            window.location.href="http://auth.gulimall.com"
+            return false;
+        }
+        var num = $('#num').val()
+        sessionId = $('#secKillToCard').attr('sessionId')
+        code = $('#secKillToCard').attr('code')
+        window.location.href = `http://seckill.gulimall.com/kill?num=${num}&sessionId=${sessionId}&code=${code}`
+        return false;
+    })
+
 
     timeDiff();
 
@@ -1364,13 +1389,13 @@
         var currentTime = new Date().getTime();
         var timer = $("#timer").attr("value")
         var endTimer = $("#endTimer").attr("value")
-        var diffTime = dateDif(currentTime,timer?timer:endTimer)
+        var diffTime = dateDif(currentTime, timer ? timer : endTimer)
         if (diffTime === 0) {
             clearInterval(timeInterval)
         } else {
-            if(timer){
+            if (timer) {
                 $("#timer").text(diffTime)
-            }else{
+            } else {
                 $("#endTimer").text(diffTime)
             }
         }

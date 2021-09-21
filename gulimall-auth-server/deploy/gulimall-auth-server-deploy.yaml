@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: gulimall-auth-server
+    name: gulimall-auth-server
+    namespace: gulimall
+  spec:
+    progressDeadlineSeconds: 600
+    revisionHistoryLimit: 10
+    replicas: 1
+    selector:
+      matchLabels:
+        app: gulimall-auth-server
+    strategy:
+      type: RollingUpdate  #滚动更新  停止一个 开启一个
+      rollingUpdate:
+        maxSurge: 100%    #更新期间 存活的最大 pod数量
+        maxUnavailable: 100%  #最大不可用 更新期间 4个中之只能有一个不可用
+    template:
+      metadata:
+        labels:
+          app: gulimall-auth-server
+      spec:
+        containers:
+          - name: gulimall-auth-server
+            image: $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:$TAG_NAME
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+            resources:
+              limits:
+                cpu: 300m
+                memory: 500Mi
+              requests:
+                cpu: 100m
+                memory: 100Mi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            imagePullPolicy: IfNotPresent
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gulimall-auth-server
+  name: gulimall-auth-server
+  namespace: gulimall
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 20001
+  selector:
+    app: gulimall-auth-server
+  sessionAffinity: None
+  type: NodePort

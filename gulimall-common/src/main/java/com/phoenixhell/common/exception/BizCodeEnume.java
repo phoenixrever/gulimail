@@ -15,6 +15,7 @@ package com.phoenixhell.common.exception;
     */
 public enum BizCodeEnume {
     UNKNOWN_EXCEPTION(10000, "系统未知异常"),
+    TO_MANY_REQUEST(10002, "请求过于频繁"),
     VALID_EXCEPTION(10001, "参数格式校验失败"),
     SMS_CODe_EXCEPTION(10001, "验证码获取频率太高请稍后再试"),
     USER_EXIST_EXCEPTION(15001, "用户名已经存在"),

@@ -1,22 +1,31 @@
 package com.phoenixhell.gulimall.ware.conf;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 public class MyRabbitConfig {
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    RabbitTemplate rabbitTemplate;
+    //参照RabbitTemplate 的构造函数自己构建一个
+
+    @Primary   //不用容器的 用我们的
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
+        this.rabbitTemplate= new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(messageConverter());
+        initRabbitTemplate();
+        return rabbitTemplate;
+    }
 
     //rabbitmq 的序列化机制 改成json
     @Bean
@@ -24,9 +33,6 @@ public class MyRabbitConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    //定制rabbitTemplate的回调 发送的消息被确认之后干什么
-    //@PostConstruct  rabbitTemplate对象创建完成以后(应该是保证template对象存在)执行
-    @PostConstruct
     public void initRabbitTemplate() {
         //服务器收到消息的回调
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
@@ -56,14 +62,8 @@ public class MyRabbitConfig {
             @Override
             public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
                 System.out.println("发送消息失败");
-                //System.out.println("message====>" + message);
-                //System.out.println("replyCode====>" + replyCode);
-                //System.out.println("replyText====>" + replyText);
-                //System.out.println("exchange====>" + exchange);
-                //System.out.println("routingKey====>" + routingKey);
             }
         });
-
     }
 
     //给容器中放入 exchange 路由器与队列 queue 以及他们的绑定器

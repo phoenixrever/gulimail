@@ -12,4 +12,7 @@ public interface MemberFeignService {
     // 远程获取会员收获地址feign接口
     @GetMapping("/member/memberreceiveaddress/{memberId}/addresses")
      List<MemberAddressVo> getAddress(@PathVariable Long memberId);
+
+    @GetMapping("/member/memberreceiveaddress/{memberId}/defaultAddress")
+    public MemberAddressVo getDefaultAddress(@PathVariable Long memberId);
 }

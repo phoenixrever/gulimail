@@ -1,0 +1,59 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gulimall-seckill
+  redis:
+    host: redis.gulimall
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos-server.gulimall:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: sentinel-server.gulimall:8333
+#  zipkin:
+#    base-url: http://192.168.56.100:9411
+#    #关闭zipkin 的服务发现 不然spring cloud 会把zipkin的url 当作服务名称
+#    discovery-client-enabled: false
+#    # 设置zipkin 使用http的方式传输数据
+#    sender:
+#      type: web
+#  sleuth:
+#    sampler:
+#      #采样率介于0到1之间， 默认为0.1 即10%  1表示全部采集
+#      probability: 1
+
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 100
+  session:
+    store-type: redis
+  rabbitmq:
+    host: rabbitmq.gulimall
+    port: 5672
+    virtual-host: /
+    publisher-confirm-type: correlated #开启发送端确认
+    publisher-returns: true            #开启消息发送抵达队列的确认
+    template:
+      mandatory: true                  #只要抵达队列，以异步方式优先回调我们这个
+    listener:
+      simple:
+        acknowledge-mode: manual    #消费端手动ack 消息
+  thymeleaf:
+    cache: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" #yaml注意引号
+feign:
+  sentinel:
+    enabled: true
+

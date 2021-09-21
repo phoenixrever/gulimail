@@ -10,7 +10,9 @@ import com.phoenixhell.common.enume.OrderStatusEnum;
 import com.phoenixhell.common.exception.BizCodeEnume;
 import com.phoenixhell.common.exception.MyException;
 import com.phoenixhell.common.to.SkuHasStockVo;
+import com.phoenixhell.common.to.mq.OrderItemEntityTo;
 import com.phoenixhell.common.to.mq.OrderTo;
+import com.phoenixhell.common.to.mq.SecKillTo;
 import com.phoenixhell.common.utils.PageUtils;
 import com.phoenixhell.common.utils.Query;
 import com.phoenixhell.common.utils.R;
@@ -45,6 +47,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -70,6 +73,86 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private OrderItemService orderItemService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Override
+    public void createSecKillOrder(SecKillTo secKillTo) throws ExecutionException, InterruptedException {
+        //注意 这里是拿不到session 数据的 也拿不到member  因为没有发从cookie
+        CreatedOrderTo createdOrderTo = new CreatedOrderTo();
+        createdOrderTo.setPayPrice(secKillTo.getSeckillPrice().multiply(new BigDecimal(secKillTo.getNum())));
+        //2构建订单
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderSn(secKillTo.getOrderSn());
+        orderEntity.setMemberId(secKillTo.getMemberId());
+        //设置订单状态信息
+        orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+        //自动确认时间(默认收获)
+        orderEntity.setAutoConfirmDay(7);
+        //默认删除时间
+        orderEntity.setDeleteStatus(0);
+
+        //获取收获信息feign 失败错误同一处理 默认地址
+        //获取地址
+        CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
+            MemberAddressVo defaultAddress = memberFeignService.getDefaultAddress(secKillTo.getMemberId());
+            if (defaultAddress == null) {
+                throw new MyException(30000, "获取默认收获地址失败");
+            }
+            return defaultAddress;
+        }, executor).thenAcceptAsync((defaultAddress) -> {
+            // 获取运费
+            R r = wareFeginService.getFare(defaultAddress.getId());
+            if(r.getCode()!=0){
+                throw new MyException(30000, "运费无法计算");
+            }
+            FareVo fareVo = r.getData("fareVo", new TypeReference<FareVo>() {});
+            //获取运费
+            orderEntity.setFreightAmount(fareVo.getFare());
+            //收货人信息
+            orderEntity.setReceiverName(fareVo.getMemberAddressVo().getName());
+            orderEntity.setReceiverPhone(fareVo.getMemberAddressVo().getPhone());
+            orderEntity.setReceiverCity(fareVo.getMemberAddressVo().getCity());
+            orderEntity.setReceiverDetailAddress(fareVo.getMemberAddressVo().getDetailAddress());
+            orderEntity.setReceiverPostCode(fareVo.getMemberAddressVo().getPostCode());
+            orderEntity.setReceiverProvince(fareVo.getMemberAddressVo().getProvince());
+            orderEntity.setReceiverRegion(fareVo.getMemberAddressVo().getRegion());
+            orderEntity.setPayAmount((secKillTo.getSeckillPrice().multiply(new BigDecimal(secKillTo.getNum())).add(fareVo.getFare())));
+
+        },executor);
+        future.get();
+        //构建订单项目
+        OrderItemEntity orderItemEntity =new OrderItemEntity();
+        OrderItemEntityTo orderItemEntityTo = secKillTo.getOrderItemEntityTo();
+        BeanUtils.copyProperties(orderItemEntityTo,orderItemEntity);
+        orderItemEntity.setOrderSn(secKillTo.getOrderSn());
+        List<OrderItemEntity> orderItemEntities=  new ArrayList<>();
+        orderItemEntities.add(orderItemEntity);
+        createdOrderTo.setOrder(orderEntity);
+        createdOrderTo.setOrderItems(orderItemEntities);
+        createdOrderTo.setFare(orderEntity.getFreightAmount());
+        createdOrderTo.setPayPrice(orderEntity.getPayAmount().multiply(orderEntity.getFreightAmount()));
+        saveOrder(createdOrderTo);
+
+        // 锁库存 由异常抛出回滚数据
+        WareSkuLockVo wareSkuLockVo = new WareSkuLockVo();
+        wareSkuLockVo.setOrderSn(createdOrderTo.getOrder().getOrderSn());
+        List<OrderItemVo> orderItemVos = createdOrderTo.getOrderItems().stream().map(item -> {
+            OrderItemVo orderItemVo = new OrderItemVo();
+            orderItemVo.setSkuId(item.getSkuId());
+            orderItemVo.setCount(item.getSkuQuantity());
+            return orderItemVo;
+        }).collect(Collectors.toList());
+        wareSkuLockVo.setLocks(orderItemVos);
+
+        //高并发场景下 事务失败自身回滚同时发送消息队列 让监听此队列的库存服务回滚
+        R r = wareFeginService.lockOrderStock(wareSkuLockVo);
+        if (r.getCode() != 0) {
+            //失败事务回滚
+            throw new MyException(BizCodeEnume.NO_STOCK_EXCEPTION.getCode(), BizCodeEnume.NO_STOCK_EXCEPTION.getMsg());
+        }
+
+        //订单创建成功 发消息给延时队列
+        rabbitTemplate.convertAndSend("order-event-exchange","order.create.order",createdOrderTo.getOrder());
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -429,6 +512,4 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         return orderItemEntity;
     }
-
-
 }

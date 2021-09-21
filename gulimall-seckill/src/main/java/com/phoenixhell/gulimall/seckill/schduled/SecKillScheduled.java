@@ -29,7 +29,7 @@ public class SecKillScheduled {
      * 秒 分 时 日 月 周
      */
     @Async
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void upSecKillScheduledLast3Days(){
         /*
          * 多个微服务最终只有1个微服务上架商品 解决 加分布式锁

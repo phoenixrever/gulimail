@@ -33,6 +33,13 @@ public class MemberReceiveAddressController {
         return addressEntityList;
     }
 
+    // 远程获取会员默认收获地址feign接口
+    @GetMapping("/{memberId}/defaultAddress")
+    public MemberReceiveAddressEntity getDefaultAddress(@PathVariable Long memberId){
+        MemberReceiveAddressEntity addressEntity = memberReceiveAddressService.query().eq("member_id", memberId).eq("default_status", 1).one();
+        return addressEntity;
+    }
+
     /**
      * 列表
      */

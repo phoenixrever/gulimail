@@ -3,8 +3,6 @@ package com.phoenixhell.gulimall.order.config;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +15,6 @@ import java.util.Map;
 public class MyRabbitConfig {
     @Autowired
     private RabbitTemplate rabbitTemplate;
-
-    //rabbitmq 的序列化机制 改成json
-    @Bean
-    public MessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
 
     //定制rabbitTemplate的回调 发送的消息被确认之后干什么
     //@PostConstruct  rabbitTemplate对象创建完成以后(应该是保证template对象存在)执行
@@ -138,6 +130,24 @@ public class MyRabbitConfig {
                 Binding.DestinationType.QUEUE,
                 "order-event-exchange",
                 "stock.release.#",
+                null
+        );
+    }
+
+    //秒杀监听队列  收到秒杀订单就创建
+    @Bean
+    public Queue orderSecKillQueue() {
+        Queue orderSecKillQueue = new Queue("order.seckill.queue", true, false, false);
+        return orderSecKillQueue;
+    }
+    //绑定交换机
+    @Bean
+    public Binding OrderSecKillBinding() {
+        return new Binding(
+                "order.seckill.queue",
+                Binding.DestinationType.QUEUE,
+                "order-event-exchange",
+                "order.seckill.#",
                 null
         );
     }

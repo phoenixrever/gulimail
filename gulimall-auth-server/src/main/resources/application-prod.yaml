@@ -1,0 +1,39 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gulimall-auth-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos-server.gulimall:8848
+    sentinel:
+      transport:
+        port: 8719   #微服务与控制台传送信息的端口 假如被占用了会自动从8719开始依次+1扫描。直至找到未被占用的端口
+        dashboard: sentinel-server.gulimall:8333  #sentinel 控制台地址
+  redis:
+    host: redis.gulimall
+    port: 6379
+  session:
+    store-type: redis
+#  zipkin:
+#    base-url: http://192.168.56.100:9411
+    #关闭zipkin 的服务发现 不然spring cloud 会把zipkin的url 当作服务名称
+#    discovery-client-enabled: false
+#    # 设置zipkin 使用http的方式传输数据
+#    sender:
+#      type: web
+#  sleuth:
+#    sampler:
+#      #采样率介于0到1之间， 默认为0.1 即10%  1表示全部采集
+#      probability: 1
+github:
+  clientID: 406c36b759dfce2197c1
+  clientSecrets: 15e7c6916e4623f9e94ce20daceddbd0475e8e4b
+  authorizeUrl: https://github.com/login/oauth/authorize
+  callbackUrl: http://auth.gulimall.com/oauth2/callback
+  accessTokenUrl: https://github.com/login/oauth/access_token
+  userInfoUrl: https://api.github.com/user
+feign:
+  sentinel:
+    enabled: true

@@ -126,7 +126,12 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session){
-        session.removeAttribute(AuthConstant.LOGIN_USER);
+        //不起作用 只是移除了用户 session 还在
+        //session.removeAttribute(AuthConstant.LOGIN_USER);
+
+        //使Session变成无效，及用户退出
+        session.invalidate();
+        //清理redis 当前登录用户的session信息
         return "redirect:http://"+AuthConstant.WEBNAME;
     }
 }

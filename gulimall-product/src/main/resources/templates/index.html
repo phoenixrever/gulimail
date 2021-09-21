@@ -610,11 +610,12 @@
         window.location.href = "http://search.gulimall.com?keyword=" + keyword;
     }
 
-    $.get("http://gulimall.com/api/seckill/currentSecKillSkus", function (data) {
+    $.get("http://seckill.gulimall.com/currentSecKillSkus", function (data) {
+        console.log(data);
         var str = "";
         $.each(data.data, (key, v) => {
             // console.log(v);
-            str += `<li style="cursor:pointer" class="seckillItem" skuId=${v.skuId}> <img style="width: 130px;height: 130px;margin-top: 8px; margin-bottom: 0px;" src=${(v.skuInfoVo.skuDefaultImg == null ? '' : v.skuInfoVo.skuDefaultImg)} alt=''>`;
+            str += `<li style="cursor:pointer" class="seckillItem" skuId=${v.skuId}> <img style="width: 130px;height: 130px;margin-top: 8px; margin-bottom: 0px;" src=${(v.skuInfoVo.skuDefaultImg == null ? '' : v.skuInfoVo.skuDefaultImg)} >`;
             str += `<p>${v.skuInfoVo.skuName}</p>`;
             str += ` <span>¥${v.seckillPrice}</span><s>¥${v.skuInfoVo.price}</s></li>`;
         })

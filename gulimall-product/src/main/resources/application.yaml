@@ -14,6 +14,19 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        port: 8719   #微服务与控制台传送信息的端口 假如被占用了会自动从8719开始依次+1扫描。直至找到未被占用的端口
+        dashboard: localhost:8333  #sentinel 控制台地址
+      datasource:
+        ds1:
+          nacos:
+            server-addr: localhost:8848
+            dataId: gulimall-product
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+
   #时间格式化
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -25,6 +38,21 @@ spring:
     #suffix: .html
   redis:
     host: 192.168.56.100
+
+  zipkin:
+    base-url: http://192.168.56.100:9411
+    #关闭zipkin 的服务发现 不然spring cloud 会把zipkin的url 当作服务名称
+    discovery-client-enabled: false
+    # 设置zipkin 使用http的方式传输数据
+    sender:
+      type: web
+
+  sleuth:
+    sampler:
+      #采样率介于0到1之间， 默认为0.1 即10%  1表示全部采集
+      probability: 1
+
+
 
 #mybatis
 mybatis-plus:
@@ -47,7 +75,9 @@ mybatis-plus:
 #打印sql 语句
 logging:
   level:
-    com.phoenixhell.gulimall : debug
+    com.phoenixhell.gulimall: debug
+    com.springframework.cloud.openfeign: debug
+    com.springframework.cloud.sleuth: debug
 
 gulimall:
   thread:
@@ -55,3 +85,7 @@ gulimall:
     maximum-pool-size: 200
     keep-alive-time: 10
     work-queues: 100000
+feign:
+  sentinel:
+    enabled: true
+
