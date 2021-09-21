@@ -24,12 +24,10 @@ pipeline {
       steps {
         git(credentialsId: 'github-id', url: 'https://github.com/phoenixrever/gulimall.git', branch: 'master', changelog: true, poll: false)
         sh 'echo 正在构建==>$PROJECT_NAME 版本号==>$PROJECT_VERSION'
-//         container ('maven') {
-//             sh 'mvn clean install -Dmaven.test.skip=true -gs `pwd`/mvn-settings.xml'
-//         }
       }
     }
 
+//     注意 -o 是离线模式
     stage('build & push') {
       steps {
         container('maven') {
@@ -43,6 +41,7 @@ pipeline {
       }
     }
 
+// 推送最新镜像
     stage('push latest') {
       when {
         branch 'master'
