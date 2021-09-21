@@ -1,11 +1,11 @@
 <!--jenkins 线上的mvn配置 -->
-<!--<settings>-->
-<!--    <mirrors>-->
-<!--        <mirror>-->
-<!--            <id>alimaven</id>-->
-<!--            <name>aliyun maven</name>-->
-<!--            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
-<!--            <mirrorOf>central</mirrorOf>-->
-<!--        </mirror>-->
-<!--    </mirrors>-->
-<!--</settings>-->
+<settings>
+    <mirrors>
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
+</settings>
