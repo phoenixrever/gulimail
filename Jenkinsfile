@@ -76,11 +76,11 @@ pipeline {
       }
     }
 
-//     configs deploy/** 里面所有部署文件
+//     configs deploy/** 里面所有部署文件  一定要双引号
     stage('deploy to prod') {
       steps {
-        input(id: 'deploy-to-prod $PROJECT_NAME', message: 'deploy to prod?')
-        kubernetesDeploy(configs: 'deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+        input(id: "deploy-to-prod $PROJECT_NAME", message: "deploy to prod?")
+        kubernetesDeploy(configs: "$PROJECT_NAME/deploy/**", enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
       }
     }
   }
