@@ -1,45 +1,45 @@
 kind: Deployment
 apiVersion: apps/v1
-  metadata:
-    labels:
+metadata:
+  labels:
+    app: gulimall-gateway
+  name: gulimall-gateway
+  namespace: gulimall
+spec:
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 10
+  replicas: 1
+  selector:
+    matchLabels:
       app: gulimall-gateway
-    name: gulimall-gateway
-    namespace: gulimall
-  spec:
-    progressDeadlineSeconds: 600
-    revisionHistoryLimit: 10
-    replicas: 1
-    selector:
-      matchLabels:
+  strategy:
+    type: RollingUpdate  #滚动更新  停止一个 开启一个
+    rollingUpdate:
+      maxSurge: 100%    #更新期间 存活的最大 pod数量
+      maxUnavailable: 100%  #最大不可用 更新期间 4个中之只能有一个不可用
+  template:
+    metadata:
+      labels:
         app: gulimall-gateway
-    strategy:
-      type: RollingUpdate  #滚动更新  停止一个 开启一个
-      rollingUpdate:
-        maxSurge: 100%    #更新期间 存活的最大 pod数量
-        maxUnavailable: 100%  #最大不可用 更新期间 4个中之只能有一个不可用
-    template:
-      metadata:
-        labels:
-          app: gulimall-gateway
-      spec:
-        containers:
-          - name: gulimall-gateway
-            image: $REGISTRY/$DOCKERHUB_NAMESPACE/$PROJECT_NAME:latest
-            ports:
-              - containerPort: 8080
-                protocol: TCP
-            resources:
-              limits:
-                cpu: 300m
-                memory: 500Mi
-              requests:
-                cpu: 100m
-                memory: 100Mi
-            terminationMessagePath: /dev/termination-log
-            terminationMessagePolicy: File
-            imagePullPolicy: IfNotPresent
-        restartPolicy: Always
-        terminationGracePeriodSeconds: 30
+    spec:
+      containers:
+        - name: gulimall-gateway
+          image: $REGISTRY/$DOCKERHUB_NAMESPACE/$PROJECT_NAME:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 300m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
 
 ---
 
