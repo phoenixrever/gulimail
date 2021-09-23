@@ -53,7 +53,6 @@ pipeline {
 
       }
     }
-
 //     configs deploy/** 里面所有部署文件  一定要双引号
     stage('deploy to prod') {
       steps {
@@ -61,8 +60,6 @@ pipeline {
         kubernetesDeploy(configs: "$PROJECT_NAME/deploy/**", enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
       }
     }
-  }
-
 //发布好了 更新github的tag
     stage('push with tag'){
       when{
@@ -84,4 +81,5 @@ pipeline {
          }
       }
     }
+  }
 }
