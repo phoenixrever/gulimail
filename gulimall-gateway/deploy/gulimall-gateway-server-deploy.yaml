@@ -56,7 +56,7 @@ spec:
       port: 8080
       protocol: TCP
       targetPort: 8080
-      nodePort: 20004
+      nodePort: 30004
   selector:
     app: gulimall-gateway
   sessionAffinity: None
